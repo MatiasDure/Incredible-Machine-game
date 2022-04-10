@@ -26,6 +26,7 @@ public class Tank : Rec
         barrel = new Barrel(this);
         AddChild(barrel);
         balls = new List<Ball>(8);
+        barrelRotationUnitVector = Vector2.GetUnitVectorDeg(barrel.rotation);
     }
 
     void Update()

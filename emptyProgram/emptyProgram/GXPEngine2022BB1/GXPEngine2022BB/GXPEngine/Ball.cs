@@ -5,22 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using GXPEngine;
 
-public class Ball: EasyDraw 
+public class Ball : EasyDraw
 {
 
     Vector2 _position, _oldPosition, _velocity;
     public Vector2 acceleration;
 
     public static float bounciness = 0.6f;
-    public static Vector2 gravity = new Vector2(0,0.1f);
+    public static Vector2 gravity = new Vector2(0, 0.1f);
 
     public Vector2 Position { get => _position; }
 
     public readonly bool canMove;
     public readonly int radius;
 
-    public Ball(int pRadius, Vector2 pPosition, Vector2 pVelocity = new Vector2(), Vector2 pAcceleration = new Vector2(), 
-                bool pCanMove = true) : base(pRadius*2+4, pRadius*2+4)
+    public Ball(int pRadius, Vector2 pPosition, Vector2 pVelocity = new Vector2(), Vector2 pAcceleration = new Vector2(),
+                bool pCanMove = true) : base(pRadius * 2 + 4, pRadius * 2 + 4)
     {
         _position = pPosition;
         _velocity = pVelocity;
@@ -30,13 +30,13 @@ public class Ball: EasyDraw
         SetXY(_position.x, _position.y);
         SetOrigin(width / 2, height / 2);
 
-        Draw(250,0,0);
+        Draw(250, 0, 0);
     }
 
     void Draw(byte pR, byte pG, byte pB)
     {
         Fill(pR, pG, pB);
-        Ellipse(radius,radius, radius*2, radius*2);
+        Ellipse(radius, radius, radius * 2, radius * 2);
         Stroke(pR, pG, pB);
     }
 
@@ -55,8 +55,8 @@ public class Ball: EasyDraw
             bool firstTime = true;
             _oldPosition = _position;
             _velocity += acceleration;
-            
-            for (int i = 0; i < 2; i++) 
+
+            for (int i = 0; i < 2; i++)
             {
                 _position += _velocity;
                 CollisionInfo firstCollision = FindEarliestCollision();
@@ -78,7 +78,7 @@ public class Ball: EasyDraw
 
     CollisionInfo FindEarliestCollision()
     {
-        MyGame myGame = (MyGame) game;
+        MyGame myGame = (MyGame)game;
 
         float smallestToi = 100;
         float currentToi = smallestToi;
@@ -90,7 +90,7 @@ public class Ball: EasyDraw
             Ball other = myGame.GetPointAtIndex(i);
             smallestToi = ToiPoint(other, currentToi);
 
-            if(smallestToi != currentToi)
+            if (smallestToi != currentToi)
             {
                 collisionDetected = true;
                 firstColNormal = (this._oldPosition + smallestToi * this._velocity) - other._position; // Point of impact - mover.position
@@ -103,17 +103,17 @@ public class Ball: EasyDraw
         {
             NLineSegment currentLine = myGame.GetLineAtIndex(i);
             smallestToi = ToiLine(currentLine, currentToi);
-            
-            if(smallestToi != currentToi)
+
+            if (smallestToi != currentToi)
             {
-                collisionDetected = true;               
+                collisionDetected = true;
                 firstColNormal = currentLine._normal.vector;
                 Console.WriteLine(firstColNormal);
                 currentToi = smallestToi;
             }
         }
 
-        if (collisionDetected) return new CollisionInfo(firstColNormal,null,smallestToi);
+        if (collisionDetected) return new CollisionInfo(firstColNormal, null, smallestToi);
         return null;
     }
 
@@ -125,7 +125,7 @@ public class Ball: EasyDraw
         _velocity *= 0.995f; //friction
     }
 
-    float ToiPoint (Ball pOther, float pCurrentToi)
+    float ToiPoint(Ball pOther, float pCurrentToi)
     {
         Vector2 oldRelativePos = this._oldPosition - pOther._position;
 
@@ -158,7 +158,7 @@ public class Ball: EasyDraw
         }
     }
 
-    float ToiLine (NLineSegment pOther, float pCurrentToi)
+    float ToiLine(NLineSegment pOther, float pCurrentToi)
     {
         Vector2 lineVector = pOther.start - pOther.end;
         Vector2 diffVecBetweenEndPoint = this._position - pOther.end;
