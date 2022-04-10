@@ -44,12 +44,14 @@ public struct Vector2
         this.Div(length);
     }
 
+    //extra method
     public void SetLength(float pScale)
     {
         this.Normalize();
         this.Mult(pScale);
     }
 
+    //extra method
     public void LimitLength(float pLimit)
     {
         float length = this.Length();
@@ -79,6 +81,7 @@ public struct Vector2
         return new Vector2(this.x / length, this.y / length);
     }
 
+    //extra method
     public static Vector2 COM(Vector2 pVelocity1, Vector2 pVelocity2, float pMass1, float pMass2) => (pVelocity1 * pMass1 + pVelocity2 * pMass2) / (pMass1 + pMass2);
 
     public void Reflect(float pBounciness, Vector2 pNormal, Vector2 pCom = new Vector2())
@@ -91,6 +94,7 @@ public struct Vector2
 
     public static float Dot(Vector2 pLeft, Vector2 pRight) => pLeft.x * pRight.x + pLeft.y * pRight.y;
 
+    //extra method
     public float ScalarProjection(Vector2 pOther, bool pAlreadyUnitVec = false) => ScalarProjection(this, pOther, pAlreadyUnitVec);
 
     public static float ScalarProjection(Vector2 pLeft, Vector2 pRight, bool pAlreadyUnitVec = false)
@@ -100,6 +104,7 @@ public struct Vector2
 
     public Vector2 Normal() => new Vector2(-this.y, this.x).Normalized();
 
+    //extra method
     public static Vector2 VectorProjection(Vector2 pLeft, Vector2 pRight, bool pAlreadyUnitVec = false)
     {
         float sp = ScalarProjection(pLeft, pRight, pAlreadyUnitVec);
@@ -153,6 +158,7 @@ public struct Vector2
         this += pTarget;
     }
 
+    //extra method
     public float DistanceBetween(Vector2 pOther)
     {
         return Mathf.Sqrt((pOther.x - this.x) * (pOther.x - this.x) + (pOther.y - this.y) * (pOther.y - this.y));
@@ -207,6 +213,58 @@ public struct Vector2
 
         v1.SetXY(2, -1);
         Console.WriteLine("Set X & Y ok?: {0}", v1.x == 2 && v1.y == -1);
+
+        v1 = new Vector2(2, 4);
+        Vector2 v3 = new Vector2(4, 6);
+        Vector2 v4 = new Vector2(2, 1);
+
+        Console.WriteLine("Degrees to Radians conversion ok?: {0}", Approximate(Vector2.Deg2Rad(360), Mathf.PI * 2));
+        Console.WriteLine("Radians to Degrees conversion ok?: {0}", Approximate(Vector2.Rad2Deg(Mathf.PI), 180));
+        Console.WriteLine("Get angles degrees ok?: {0}", Approximate(v1.GetAngleDegrees(), 63.43f));
+        Console.WriteLine("Get angles radians ok?: {0}", Approximate(v1.GetAngleRadians(), 1.10f));
+        v1.SetAngleDegrees(270);
+        Console.WriteLine("Set angles degrees ok?: {0}", Approximate(v1.x, 0) && Approximate(v1.y, -4.47f));
+        v1.SetAngleRadians(Mathf.PI);
+        Console.WriteLine("Set angles radians ok?: {0}", Approximate(v1.x, -4, 47f) && Approximate(v1.y, 0));
+        v2 = Vector2.GetUnitVectorDeg(270);
+        Console.WriteLine("Get unit vector degrees ok?: {0}", Approximate(v2.x, 0) && Approximate(v2.y, -1) && Approximate(v2.Length(), 1));
+        v2 = Vector2.GetUnitVectorRad(5f);
+        Console.WriteLine("Get unit vector radians ok?: {0}", Approximate(v2.x, 0.28f) && Approximate(v2.y, -0.96f) && Approximate(v2.Length(), 1));
+        for (int i = 0; i < 4; i++)
+        {
+            Vector2 v5 = Vector2.RandomUnitVector();
+            Console.WriteLine("Vector number " + i + ": " + v5 + "\n length is okay?: " + Approximate(v5.Length(), 1));
+        }
+        v1.SetXY(2, 4);
+        v1.RotateDegrees(45);
+        Console.WriteLine("Rotate degrees ok?: {0}", Approximate(v1.GetAngleDegrees(), 108.43f));
+        v1.SetXY(2, 4);
+        v1.RotateRadians(Mathf.PI / 4);
+        Console.WriteLine("Rotate radians ok?: {0}", Approximate(v1.GetAngleRadians(), 1.90f));
+        v3.RotateAroundDegrees(v4, 90);
+        Console.WriteLine("Rotate around degrees ok?: {0}", Approximate(v3.x, -3) && Approximate(v3.y, 3));
+        v3.SetXY(4, 6);
+        v3.RotateAroundRadians(v4, 5f);
+        Console.WriteLine("Rotate around radians ok?: {0}", Approximate(v3.x, 7.36f) && Approximate(v3.y, 0.50f));
+
+        v1.SetXY(3,4);
+        v2.SetXY(4,6);
+        Console.WriteLine("Dot product ok?: {0}",v1.Dot(v2) == 36);
+
+        float mass1 = 4;
+        float mass2 = 5;
+
+        Vector2 com = Vector2.COM(v1, v2, mass1, mass2);
+        Console.WriteLine("Center of Mass velocity ok?: {0}", Vector2.Approximate(com.x, 3.55f) && Vector2.Approximate(com.y, 5.11f));
+        v1.Reflect(1, v2.Normal(), com);
+        Console.WriteLine("Reflect ok?: {0}", Vector2.Approximate(v1.x, 2.743f) && Vector2.Approximate(v1.y,4.17f));
+        v1.SetXY(3, 4);
+        Console.WriteLine("ScalarProjection ok?: {0}", Vector2.Approximate(v1.ScalarProjection(v2),4.992f));
+        Vector2 vp = Vector2.VectorProjection(v1, v2);
+        Console.WriteLine("VectorProjection ok?: {0}", Vector2.Approximate(vp.x,2.76f),Vector2.Approximate(vp.y,4.15f));
+        Vector2 norm = v1.Normal();
+        Console.WriteLine("Normal ok?: {0}",norm.x == -0.8f && norm.y == 0.6f);
+        Console.WriteLine("distance between ok?: {0}", Vector2.Approximate(v1.DistanceBetween(v2), 2.23f));
     }
 
     static bool Approximate(float a, float b, float errorMargin = 0.01f) => (Mathf.Abs(a - b) < errorMargin);

@@ -29,7 +29,8 @@ public class MyGame : Game
 
 		LoadLevel(currentLevel);
 
-		Vector2.PerformUnitTest(); //unit test for Vec2
+		
+		Vector2.PerformUnitTest(); // unit test for Vec2
 	}
 
 	// For every game object, Update is called every frame, by the engine:
@@ -37,6 +38,8 @@ public class MyGame : Game
 	{
 		UpdateText(levelStatus, String.Format("Level succeded: {0}!",beatLevel));
 		HandleInput();
+
+		//checks if enter has been press in order to start game iteration
 		if (!levelIterationStarted && Input.GetKeyDown(Key.ENTER))
 		{
 			levelIterationStarted = true;
@@ -74,12 +77,13 @@ public class MyGame : Game
 	void HandleInput()
     {
 		targetFps = 5;
-		for(int i = 0; i < amountLevels;i++)
+		for(int i = 0; i <= amountLevels;i++)
         {
 			if (Input.GetKeyDown(i + 48)) LoadLevel(i);
 		}	
     }
 
+	//Restarts level if ball is outside boundary
 	void CheckBoundary()
     {
 		if (currentBall.Position.x + currentBall.radius > width ||
@@ -113,8 +117,10 @@ public class MyGame : Game
 				//tank 1
 				AddTank(new Vector2(800, 250));
 
-				//line 1
+				//Polygon 1
 				AddPolygon(new Vector2[] { new Vector2(650, 600), new Vector2(650, 180), new Vector2(200, 180) });
+
+			    //Line 1
 				AddLine(new Vector2(40, 100), new Vector2(450, 500));
 
 				//starting ball 
@@ -125,14 +131,66 @@ public class MyGame : Game
 				break;
 
 			case 3:
+				//tank 1
+				AddTank(new Vector2(90, 250));
 
+				//tank 2
+				AddTank(new Vector2(620, 550));
+
+				//Polygon 1
+				AddPolygon(new Vector2[] { new Vector2(650, 400), new Vector2(650, 180), new Vector2(200, 180)},0,false);
+
+				//starting ball 
+				currentBall = new Ball(20, new Vector2(70, 180), new Vector2(0, 0), new Vector2(0, 0.1f));
+
+				//finish flag
+				flag = new Flag(new Vector2(580, 350));
 				break;
 
-			case 4: 
+			case 4:
+				//tank 1
+				AddTank(new Vector2(130, 290));
 
+				//tank 2
+				AddTank(new Vector2(360, 290));
+
+				//tank 3
+				AddTank(new Vector2(590, 290));
+				
+				//tank 4
+				AddTank(new Vector2(820, 290));
+
+				//boundary
+				AddPolygon(new Vector2[] { new Vector2(30,270), new Vector2(70, 140), new Vector2(width-70, 140),
+                                            new Vector2(width-30,270), new Vector2(width-30, height-70),
+                                            new Vector2(width-70, height-30), new Vector2(70, height - 30),
+                                            new Vector2(30, height - 70)});
+
+				AddPolygon(new Vector2[] { new Vector2(1200, 630), new Vector2(1200, 400), new Vector2(1000, 250) });
+
+				//line 1
+				AddLine(new Vector2(260,190), new Vector2(260,360));
+
+				//Line2
+				AddLine(new Vector2(490, 190), new Vector2(490, 360));
+
+				//Line3
+				AddLine(new Vector2(720, 190), new Vector2(720, 360));
+
+				//Line4
+				AddLine(new Vector2(50, 550), new Vector2(140, 550));
+
+				//Line5
+				AddLine(new Vector2(170, 580), new Vector2(170, 640));
+
+				//starting ball 
+				currentBall = new Ball(20, new Vector2(130, 100), new Vector2(0, 0), new Vector2(0, 0.1f));
+
+				//finish flag
+				flag = new Flag(new Vector2(100, 630));
 				break;
 
-			default: //Create your own level! :D Use AddPolygon or/and AddLine
+			default: //Create your own level! :D Use AddPolygon or/and AddLine to create the obstacles
 
 				//starting ball 
 				currentBall = new Ball(20, new Vector2(100, 70), new Vector2(0, 0), new Vector2(0, 0.1f));
@@ -181,7 +239,6 @@ public class MyGame : Game
 		obj.Text(pText);
 	}
 
-	//Removes all objects from the game
 	void RemoveObjects()
     {
 		List<GameObject> children = game.GetChildren();
@@ -191,7 +248,6 @@ public class MyGame : Game
         }
 	}
 
-	//Resets level
 	void ResetLevel()
     {
 		RemoveObjects();
@@ -200,23 +256,24 @@ public class MyGame : Game
 		levelIterationStarted = beatLevel = false;
     }
 
-	//Adds a polygon shape
-	void AddPolygon(Vector2[] pPoints, int pRadius = 0)
+	void AddPolygon(Vector2[] pPoints, int pRadius = 0, bool pCloseShape = true)
     {
 		if (pPoints.Length < 2) return;
 		for(int i = pPoints.Length - 1; i > 0; i--) //going through array in reverse to avoid index out of bound exception
         {
-			NLineSegment line = new NLineSegment(pPoints[i-1],pPoints[i], 0xff00ff00, 4); //start point would be 
+			NLineSegment line = new NLineSegment(pPoints[i-1],pPoints[i], 0xff00ff00, 4);
 			AddChild(line);
 			lines.Add(line);
         }
-		NLineSegment closeLine = new NLineSegment(pPoints[pPoints.Length - 1], pPoints[0], 0xff00ff00, 4); //close opening by creating a line between first and last points
-		AddChild(closeLine);
-		lines.Add(closeLine);
+		if(pCloseShape)
+        {
+			NLineSegment closeLine = new NLineSegment(pPoints[pPoints.Length - 1], pPoints[0], 0xff00ff00, 4); //close opening by creating a line between first and last points
+			AddChild(closeLine);
+			lines.Add(closeLine);
+        }
 		AddLineCaps(pPoints, pRadius);
     }
 
-	//Adds line caps to lines
 	void AddLineCaps(Vector2[] pPoints, int pRadius = 0)
     {
 		for(int i = 0; i < pPoints.Length; i++)
@@ -227,23 +284,8 @@ public class MyGame : Game
         }
     }
 
-	//Adds line
-	void AddLine(Vector2 pStart, Vector2 pEnd, int pRadius = 0)
-	{
-		for(int i = 0; i < 2; i++)
-        {
-			NLineSegment line = new NLineSegment(pStart, pEnd, 0xff00ff00, 4);
-			AddChild(line);
-			lines.Add(line);
-			if (i > 0) break;
-			Vector2 holder = pStart;
-			pStart = pEnd;
-			pEnd = holder;
-		}
-		AddLineCaps(new Vector2[] { pStart, pEnd }, pRadius);
-	}
+	void AddLine(Vector2 pStart, Vector2 pEnd, int pRadius = 0, bool CloseShape = true) => AddPolygon(new Vector2[] { pStart, pEnd }, pRadius, CloseShape);
 
-	//Adds tank to list and game
 	void AddTank(Vector2 pPosition)
     {
 		Tank tank = new Tank(pPosition);
