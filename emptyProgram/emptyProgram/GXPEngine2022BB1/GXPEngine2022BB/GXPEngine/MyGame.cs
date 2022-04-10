@@ -184,7 +184,7 @@ public class MyGame : Game
 				AddLine(new Vector2(170, 580), new Vector2(170, 640));
 
 				//starting ball 
-				currentBall = new Ball(20, new Vector2(130, 100), new Vector2(0, 0), new Vector2(0, 0.1f));
+				currentBall = new Ball(20, new Vector2(130, 170), new Vector2(0, 0), new Vector2(0, 0.1f));
 
 				//finish flag
 				flag = new Flag(new Vector2(100, 630));
