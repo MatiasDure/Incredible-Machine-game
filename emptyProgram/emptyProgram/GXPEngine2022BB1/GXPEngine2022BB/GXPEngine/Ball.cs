@@ -162,28 +162,16 @@ public class Ball : EasyDraw
     {
         Vector2 lineVector = pOther.start - pOther.end;
         Vector2 diffVecBetweenEndPoint = this._position - pOther.end;
-        Vector2 diffVecBetweenStartPoint = this._position - pOther.start;
 
         float lineVectorLength = lineVector.Length();
+        float scalarProjection = diffVecBetweenEndPoint.ScalarProjection(lineVector);
 
-        Vector2 unitLineVector = lineVector.Normalized();
+        //returns the currentToi if the line is not between the line segment
+        if (scalarProjection > lineVectorLength || scalarProjection < 0) return pCurrentToi;
 
-        float scalarProjection1 = diffVecBetweenEndPoint.ScalarProjection(unitLineVector, true);
-        float scalarProjection2 = diffVecBetweenStartPoint.ScalarProjection(unitLineVector, true);
+        Vector2 vectorProjection = Vector2.VectorProjection(diffVecBetweenEndPoint, pOther._normal.vector);
 
-        // only do this with POI!
-        if (Mathf.Abs(scalarProjection1) > lineVectorLength ||
-            Mathf.Abs(scalarProjection2) > lineVectorLength) //checks if ball is not between the line segment
-        {
-            return pCurrentToi;
-        }
-
-        Vector2 vectorProjection = scalarProjection1 * unitLineVector;
-        vectorProjection += pOther.end;
-
-        float distance = this._position.DistanceBetween(vectorProjection);
-
-        if (distance < this.radius) //if ball collides with lineSegment
+        if (vectorProjection.Length() < this.radius) //if ball collides with lineSegment
         {
             float toi;
             Vector2 lineNormal = pOther._normal.vector; //(currentLine.end - currentLine.start).Normal();
