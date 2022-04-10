@@ -253,6 +253,7 @@ public class MyGame : Game
 		RemoveObjects();
 		lines.Clear();
 		tanks.Clear();
+		points.Clear();
 		levelIterationStarted = beatLevel = false;
     }
 
