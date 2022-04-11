@@ -122,7 +122,9 @@ public class Ball : EasyDraw
         Vector2 desiredPos = _oldPosition + pCollision.timeOfImpact * _velocity;
         _position.SetXY(desiredPos);
         _velocity.Reflect(Ball.bounciness, pCollision.normal);
-        _velocity *= 0.995f; //friction
+        //_velocity *= 0.995f; //friction
+        _velocity.Reflect(-0.995f, pCollision.normal.Normal()); // funky but correct friction!
+
     }
 
     float ToiPoint(Ball pOther, float pCurrentToi)

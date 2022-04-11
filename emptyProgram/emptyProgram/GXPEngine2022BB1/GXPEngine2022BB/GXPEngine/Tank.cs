@@ -77,19 +77,35 @@ public class Tank : Rec
         Vector2 velo = barrelRotationUnitVector * 4;
         Vector2 pos = this._position + barrelRotationUnitVector * 80;
 
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 50; i++)
         {
-            velo += Ball.gravity * 7;
-            pos += velo * 7;
+            velo += Ball.gravity;
+            pos += velo;
 
-            if (!visualAim)
+            if(i % 5 == 0)
             {
-                Ball b = new Ball(8 - i, pos, new Vector2(), new Vector2(), false);
-                parent.AddChild(b);
-                balls.Add(b);
-                continue;
+                if (!visualAim)
+                {
+                    Ball b = new Ball(3, pos, new Vector2(), new Vector2(), false);
+                    parent.AddChild(b);
+                    balls.Add(b);
+                    continue;
+                }
+                balls[i/5].SetXY(pos.x, pos.y);
             }
-            balls[i].SetXY(pos.x, pos.y);
+
+            // is not quite the same because you modify the position when scaling (Paul)
+            //velo += Ball.gravity * 7;
+            //pos += velo * 7; 
+
+            //if (!visualAim)
+            //{
+            //    Ball b = new Ball(8 - i, pos, new Vector2(), new Vector2(), false);
+            //    parent.AddChild(b);
+            //    balls.Add(b);
+            //    continue;
+            //}
+            //balls[i].SetXY(pos.x, pos.y);
         }
     }
 
